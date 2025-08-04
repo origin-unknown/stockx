@@ -1,6 +1,6 @@
-# HitQuiz2 backend
+# StockX
 
-## Setup and run the backend (Linux/MacOS)
+## Setup and run the app (Linux/MacOS)
 
 ```bash
 cd stockx-main
