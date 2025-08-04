@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+	<div class="d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <h1>Simple trading opportunities.</h1>
+    <p class="lead">Gain experience in the financial world and simulate how you can easily increase your money.</p>
+    <p class="lead">
+      <a href="{{ url_for('trading.index') }}" class="btn btn-lg btn-secondary fw-bold">Start now</a>
+    </p>
+  </div>
+{% endblock %}

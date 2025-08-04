@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+
+{% block title %}Portfolio{% endblock %}
+
+{% block head %}
+	{{ super() }}
+	<style>
+  input.form-control[type="date"] {
+    line-height: initial;
+    height: auto;
+    min-height: var(--bs-input-height, 2.375rem);
+  }
+	</style>
+{% endblock %}
+
+{% block content %}
+	<h1>Charts</h1>
+	<p class="lead">See your buying opportunity.</p>
+
+	<form class="row g-3" name="chart-form">
+		<div class="col-md-2">
+			<label class="form-label" for="symbol">Symbol</label>
+			<input class="form-control" type="text" name="symbol" id="symbol" value="{{ symbol }}" autofocus placeholder="AAPL" />
+		</div>
+		<div class="col-md-5">
+			<label class="form-label" for="bgn">Start</label>
+			<input class="form-control" type="date" name="bgn" id="bgn" value="{{ bgn_dt }}" />
+		</div>
+		<div class=" col-md-5">
+			<label class="form-label" for="end">End</label>
+			<input class="form-control" type="date" name="end" id="end" value="{{ end_dt }}" />
+		</div>
+		<div class="col-md-12">
+			<button class="btn btn-primary" type="submit">Submit</button>
+		</div>
+	</form>
+
+	<div id="chart" class="chart"></div>
+
+	<script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		(function(uri) {
+			const form = document.querySelector('form[name="chart-form"]');
+			form.addEventListener('submit', event => {
+				event.preventDefault();
+
+				const formData = new FormData(event.target);
+				const params = new URLSearchParams(formData).toString();
+			  const url     = `${uri}?${params}`;
+
+			  fetch(url)
+			  	.then(resp => resp.ok && resp.json())
+			  	.then(data => {
+						if (!data) return;
+						Plotly.react('chart', data.data, data.layout); 
+			  	})
+			});
+			
+			window.addEventListener('resize', () => Plotly.Plots.resize(document.getElementById('chart')));
+
+		})({{ url_for('trading.chart_data') | tojson}});
+	</script>
+{% endblock %}

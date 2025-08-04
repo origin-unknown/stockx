@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block title %}Sell{% endblock %}
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+	<h1>Buy</h1>
+
+	<form method="POST">
+		{{ form.csrf_token }}
+		<div class="mb-3">
+			{{ form.symbol.label(class_='form-label') }}
+			{{ form.symbol(class_='form-control' +
+					('', ' is-invalid')[form.symbol.errors | count],
+					autofocus='') }}
+			{% if form.symbol.errors: %}
+			<div class="invalid-feedback">
+				{{ form.symbol.errors[0] }}
+			</div>
+			{% else %}
+			<small class_="form-text text-muted">
+				{{ form.symbol.description }}
+			</small>
+			{% endif %}
+		</div>
+		<div class="mb-3">
+			{{ form.shares.label(class_='form-label') }}
+			{{ form.shares(class_='form-control' +
+					('', ' is-invalid')[form.shares.errors | count],
+					autofocus='') }}
+			{% if form.shares.errors: %}
+			<div class="invalid-feedback">
+				{{ form.shares.errors[0] }}
+			</div>
+			{% else %}
+			<small class_="form-text text-muted">
+				{{ form.shares.description }}
+			</small>
+			{% endif %}
+		</div>
+		<div>
+			{{ form.submit(class_='btn btn-primary') }}
+		</div>
+	</form>
+
+{% endblock %}

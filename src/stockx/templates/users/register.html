@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register{% endblock %}
+{% block head %}
+	{{ super() }}
+		<style>
+		.register-wrapper {
+			margin: auto;
+			max-width: 320px;
+		}
+		</style>
+{% endblock %}
+
+{% block content %}
+	<div class="register-wrapper">
+		<h1>Sign up</h1>
+		<form method="POST">
+			{{ form.csrf_token }}
+			<div class="mb-3">
+				{{ form.email.label(class_='form-label') }}
+				{{ form.email(class_='form-control' +
+						('', ' is-invalid')[form.email.errors | count],
+						autofocus='') }}
+				{% if form.email.errors: %}
+				<div class="invalid-feedback">
+					{{ form.email.errors[0] }}
+				</div>
+				{% else %}
+				<small class_="form-text text-muted">
+					{{ form.email.description }}
+				</small>
+				{% endif %}
+			</div>
+			<div class="mb-3">
+				{{ form.username.label(class_='form-label') }}
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="inputGroupPrepend">@</span>
+					</div>
+					{{ form.username(class_='form-control' +
+							('', ' is-invalid')[form.username.errors | count]) }}
+					{% if form.username.errors: -%}
+					<div class="invalid-feedback">
+						{{ form.username.errors[0] }}
+					</div>
+					{% else -%}
+					<small class_="form-text text-muted">
+						{{ form.username.description }}
+					</small>
+					{% endif -%}
+					</div>
+			</div>
+			<div class="mb-3">
+				{{ form.password.label(class_='form-label') }}
+				{{ form.password(class_='form-control' +
+						('', ' is-invalid')[form.password.errors | count]) }}
+				{% if form.password.errors: %}
+				<div class="invalid-feedback">
+					{{ form.password.errors[0] }}
+				</div>
+				{% else %}
+				<small class_="form-text text-muted">
+					{{ form.password.description }}
+				</small>
+				{% endif %}
+			</div>
+			<div class="mb-3">
+				{{ form.password_confirm.label(class_='form-label') }}
+				{{ form.password_confirm(class_='form-control' +
+						('', ' is-invalid')[form.password_confirm.errors | count]) }}
+				{% if form.password_confirm.errors: %}
+				<div class="invalid-feedback">
+					{{ form.password_confirm.errors[0] }}
+				</div>
+				{% else %}
+				<small class="form-text text-muted">
+					{{ form.password_confirm.description }}
+				</small>
+				{% endif %}
+			</div>
+			<div class="d-grid gap-2">
+				{{ form.submit(class_='btn btn-primary') }}
+			</div>
+		</form>
+	</div>
+{% endblock %}

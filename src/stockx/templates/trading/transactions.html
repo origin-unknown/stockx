@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %}Transactions{% endblock %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+	<h1>Transactions</h1>
+	<p class="lead">All your transactions neatly listed.</p>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Type</th>
+				<th>Symbol</th>
+				<th>Shares</th>
+				<th>Price</th>
+				<th>Cost</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in items -%}
+			<tr>
+				<td>{{ item.date_created.strftime('%x %X') }}</td>
+				<td>{{ item.type.name }}</td>
+				<td>{{ item.symbol }}</td>
+				<td>{{ item.shares }}</td>
+				<td>$ {{ '%.2f'|format(item.price) }}</td>
+				<td>$ {{ '%.2f'|format(item.cost) }}</td>
+			</tr>
+			{% endfor -%}
+		</tbody>
+	</table>
+{% endblock %}

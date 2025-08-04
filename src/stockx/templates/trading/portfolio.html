@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block title %}Portfolio{% endblock %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+	<h1>Portfolio</h1>
+	<p class="lead">All your stocks at a glance.</p>
+
+	<ul class="nav">
+		<li class="nav-item">
+			<a class="nav-link" href="{{ url_for('trading.buy') }}"><i class="fas fa-plus"></i> Buy</a>
+		</li>
+	</ul>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Symbol</th>
+				<th>Shares</th>
+				<th>Price</th>
+				<th>Value</th>
+				<th>Gain</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in items|sort(attribute='symbol') -%}
+			<tr>
+				<td>{{ item.symbol }}</td>
+				<td>{{ item.shares }}</td>
+				<td>$ {{ '%.2f'|format(item.price) }}</td>
+				<td>$ {{ '%.2f'|format(item.value) }}</td>
+				<td>$ {{ '%.2f'|format(item.gain) }}</td>
+				<td><a style="text-decoration: none;" href="{{ url_for('trading.sell', symbol=item.symbol) }}"><i class="fas fa-minus"></i> Sell</a></td>
+			</tr>
+			{% endfor -%}
+		</tbody>
+	</table>
+
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Total</td>
+				<td>$ {{ '%.2f'|format(total) }}</td>
+			</tr>
+		</tbody>
+	</table>
+{% endblock %}
