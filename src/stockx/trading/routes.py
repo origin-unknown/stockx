@@ -50,7 +50,9 @@ def index():
 @bp.route('/transactions')
 @login_required
 def transactions():
-	items = db.session.scalars(db.select(Transaction).order_by(Transaction.date_created.desc())).all()
+	items = db.session.scalars(db.select(Transaction)\
+		.where(Transaction.user_id == current_user.id)\
+		.order_by(Transaction.date_created.desc())).all()
 	return render_template('transactions.html', **locals())
 
 
