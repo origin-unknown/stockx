@@ -121,7 +121,7 @@ def get_sales_with_fifo_profit():
 				Transaction.user_id == current_user.id,
 				Transaction.type == TransactionType.SELL
 			)
-			.order_by(Transaction.date_created.asc())
+			.order_by(Transaction.date_created.desc())
 		)
 		.scalars()
 		.all()
@@ -132,8 +132,8 @@ def get_sales_with_fifo_profit():
 	
 	for sell in sells:
 		profit = fifo_profit_for_sale(sell)
-		results.append((sell, profit))
 		if profit is not None:
+			results.append((sell, profit))
 			total_profit += profit
 
 	return results, total_profit
