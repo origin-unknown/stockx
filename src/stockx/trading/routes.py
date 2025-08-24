@@ -119,7 +119,6 @@ def calculate_fifo_profits(user_id):
 			db.select(Transaction)
 			.where(Transaction.user_id == user_id)
 			.order_by(Transaction.symbol, Transaction.date_created.asc())
-#			.order_by(Transaction.date_created.asc())
 		)
 		.scalars()
 		.all()
