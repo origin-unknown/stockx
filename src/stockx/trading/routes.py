@@ -109,19 +109,17 @@ def sell():
 @login_required
 def sales():
 	with db.session.begin_nested():
-		sales, total_profit = get_sales_with_fifo_profit()
+		sales, total_profit = calculate_fifo_profits(current_user.id)
 
 	return render_template('sales.html', **locals())
 
-def get_sales_with_fifo_profit():
-	sells = (
+def calculate_fifo_profits(user_id):
+	txs = (
 		db.session.execute(
 			db.select(Transaction)
-			.where(
-				Transaction.user_id == current_user.id,
-				Transaction.type == TransactionType.SELL
-			)
-			.order_by(Transaction.date_created.desc())
+			.where(Transaction.user_id == user_id)
+			.order_by(Transaction.symbol, Transaction.date_created.asc())
+#			.order_by(Transaction.date_created.asc())
 		)
 		.scalars()
 		.all()
@@ -129,46 +127,32 @@ def get_sales_with_fifo_profit():
 
 	results = []
 	total_profit = 0.0
-	
-	for sell in sells:
-		profit = fifo_profit_for_sale(sell)
-		if profit is not None:
-			results.append((sell, profit))
-			total_profit += profit
+
+	queues: dict[str, deque] = {}
+
+	for tx in txs:
+		symbol_queue = queues.setdefault(tx.symbol, deque())
+
+		if tx.type == TransactionType.BUY:
+			symbol_queue.append([tx.shares, tx.price])
+		elif tx.type == TransactionType.SELL:
+			remaining = abs(tx.shares)
+			profit = 0.0
+			while remaining > 0 and symbol_queue:
+				buy_shares, buy_price = symbol_queue[0]
+				used = min(remaining, buy_shares)
+				profit += used * (tx.price - buy_price)
+				remaining -= used
+				if used == buy_shares:
+					symbol_queue.popleft()
+				else:
+					symbol_queue[0][0] -= used
+
+			results.append((tx, profit if remaining == 0 else None))
+			if remaining == 0:
+				total_profit += profit
 
 	return results, total_profit
-
-def fifo_profit_for_sale(sell: Transaction) -> float | None:
-	buys = (
-		db.session.execute(
-			db.select(Transaction)
-			.where(
-				Transaction.user_id == sell.user_id,
-				Transaction.symbol == sell.symbol,
-				Transaction.type == TransactionType.BUY,
-				Transaction.date_created <= sell.date_created
-			)
-			.order_by(Transaction.date_created.asc())
-		)
-		.scalars()
-		.all()
-	)
-
-	fifo = deque((b.shares, b.price) for b in buys)
-	remaining = abs(sell.shares)
-	profit = 0.0
-
-	while remaining > 0 and fifo:
-		buy_shares, buy_price = fifo[0]
-		used = min(remaining, buy_shares)
-		profit += used * (sell.price - buy_price)
-		remaining -= used
-		if used == buy_shares:
-			fifo.popleft()
-		else:
-			fifo[0] = (buy_shares - used, buy_price)
-
-	return profit if remaining == 0 else None
 
 @bp.route('/charts')
 @login_required

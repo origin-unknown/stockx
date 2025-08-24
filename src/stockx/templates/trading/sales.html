@@ -20,7 +20,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for txn, profit in sales -%}
+			{% for txn, profit in sales | sort(attribute="0.date_created", reverse=True) -%}
 			<tr>
 				<td>{{ txn.date_created.strftime('%x %X') }}</td>
 				<td>{{ txn.symbol }}</td>
