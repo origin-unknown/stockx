@@ -1,5 +1,7 @@
 # StockX
 
+A demo of managing a stock portfolio with price data updates via Yahoo Finance.
+
 ## Setup and run the app (Linux/MacOS)
 
 ```bash
