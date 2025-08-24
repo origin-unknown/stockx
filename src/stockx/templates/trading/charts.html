@@ -20,7 +20,7 @@
 	<form class="row g-3" name="chart-form">
 		<div class="col-md-2">
 			<label class="form-label" for="symbol">Symbol</label>
-			<input class="form-control" type="text" name="symbol" id="symbol" value="{{ symbol }}" autofocus placeholder="AAPL" />
+			<input class="form-control" type="text" name="symbol" id="symbol" value="{{ symbol }}" autofocus autocomplete="off" auplaceholder="AAPL" />
 		</div>
 		<div class="col-md-5">
 			<label class="form-label" for="bgn">Start</label>
@@ -35,7 +35,7 @@
 		</div>
 	</form>
 
-	<div id="chart" class="chart"></div>
+	<div id="chart" class="chart my-3"></div>
 
 	<script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
 	<script type="text/javascript">

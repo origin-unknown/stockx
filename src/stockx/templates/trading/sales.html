@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %}Sales{% endblock %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+	<h1>Sales</h1>
+	<p class="lead">Your sales and profit at a glance.</p>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Symbol</th>
+				<th>Shares</th>
+				<th>Gain</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for txn, profit in sales -%}
+			<tr>
+				<td>{{ txn.date_created.strftime('%x %X') }}</td>
+				<td>{{ txn.symbol }}</td>
+				<td>{{ txn.shares }}</td>
+				<td>$ {{ '%.2f'|format(profit) }}</td>
+			</tr>
+			{% endfor -%}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="3"></td>
+				<td>$ {{ '%.2f'|format(total_profit) }}
+			</tr>
+		</tfoot>
+	</table>
+{% endblock %}

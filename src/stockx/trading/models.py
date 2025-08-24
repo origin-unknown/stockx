@@ -1,8 +1,8 @@
 from .. import db
 from dataclasses import dataclass
 from datetime import datetime
-from sqlalchemy import Enum
-from sqlalchemy.sql import func 
+from sqlalchemy import Enum, Float, func
+from sqlalchemy.ext.hybrid import hybrid_property
 import enum
 
 
@@ -42,7 +42,7 @@ class Transaction(db.Model):
 	user_id: db.Mapped[int]= db.mapped_column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	user: db.Mapped['User'] = db.relationship(back_populates='transactions')
 
-	@property
+	@hybrid_property
 	def cost(self):
 		return abs(self.shares * self.price)
 

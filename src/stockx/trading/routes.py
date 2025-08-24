@@ -21,6 +21,11 @@ import plotly.graph_objects as go
 import yfinance as yf
 
 
+from collections import deque
+
+
+
+
 bp = Blueprint(
 	'trading', 
 	__name__, 
@@ -105,6 +110,70 @@ def sell():
 
 	return render_template('sell.html', **locals())
 
+@bp.route('/sales')
+@login_required
+def sales():
+	with db.session.begin_nested():
+		sales, total_profit = get_sales_with_fifo_profit()
+	return render_template('sales.html', **locals())
+
+def get_sales_with_fifo_profit():
+	sells = (
+		db.session.execute(
+			db.select(Transaction)
+			.where(
+				Transaction.user_id == current_user.id,
+				Transaction.type == TransactionType.SELL
+			)
+			.order_by(Transaction.date_created.asc())
+		)
+		.scalars()
+		.all()
+	)
+
+	results = []
+	total_profit = 0.0
+	
+	for sell in sells:
+		profit = fifo_profit_for_sale(sell)
+		results.append((sell, profit))
+		if profit is not None:
+			total_profit += profit
+
+	return results, total_profit
+
+def fifo_profit_for_sale(sell: Transaction) -> float | None:
+	buys = (
+		db.session.execute(
+			db.select(Transaction)
+			.where(
+				Transaction.user_id == sell.user_id,
+				Transaction.symbol == sell.symbol,
+				Transaction.type == TransactionType.BUY,
+				Transaction.date_created <= sell.date_created
+			)
+			.order_by(Transaction.date_created.asc())
+		)
+		.scalars()
+		.all()
+	)
+
+	fifo = deque((b.shares, b.price) for b in buys)
+	remaining = abs(sell.shares)
+	profit = 0.0
+
+	while remaining > 0 and fifo:
+		buy_shares, buy_price = fifo[0]
+		used = min(remaining, buy_shares)
+		profit += used * (sell.price - buy_price)
+		remaining -= used
+		if used == buy_shares:
+			fifo.popleft()
+		else:
+			fifo[0] = (buy_shares - used, buy_price)
+
+	return profit if remaining == 0 else None
+
 @bp.route('/charts')
 @login_required
 def charts():
@@ -121,6 +190,7 @@ def chart_data():
 
 	try:
 		ticker = yf.Ticker(symbol)
+		currency = ticker.history_metadata['currency']
 		df = ticker.history(start=bgn_dt.isoformat(), end=end_dt.isoformat(), raise_errors=True)
 	except Exception as exc:
 		abort(404)
@@ -146,14 +216,16 @@ def chart_data():
 	fig.update_layout(
 		autotypenumbers='convert types', 
 		title=f'{symbol.upper()} Chart',
-		yaxis_title='Price (USD)',
+		yaxis_title=f'Price ({currency})',
 		xaxis_title='Date', 
 		xaxis_rangeslider_visible=False, 
-		autosize=True
+		autosize=True, 
+		# paper_bgcolor='rgba(0,0,0,0)',
+		# plot_bgcolor='rgba(0,0,0,0)'
 	)
-	fig.update_yaxes(tickprefix="$")
+	# fig.update_yaxes(tickprefix="$")
 	fig.update_xaxes(
-#		dtick='D1',
+		# dtick='D1',
 		tickformat="%d.%m.%Y"
 	)
 	fig.update_xaxes(type='date')
