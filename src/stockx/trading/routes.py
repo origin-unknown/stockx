@@ -3,7 +3,7 @@ from ..users.models import User
 from .forms import BuyForm, SellForm
 from .models import PortfolioItem, Transaction, TransactionType
 from .utils import get_stock_price
-from collections import defaultdict
+from collections import defaultdict, deque
 from datetime import date, timedelta
 from flask import (
 	Blueprint, 
@@ -19,11 +19,6 @@ from sqlalchemy.sql import func
 import plotly
 import plotly.graph_objects as go
 import yfinance as yf
-
-
-from collections import deque
-
-
 
 
 bp = Blueprint(
@@ -115,6 +110,7 @@ def sell():
 def sales():
 	with db.session.begin_nested():
 		sales, total_profit = get_sales_with_fifo_profit()
+
 	return render_template('sales.html', **locals())
 
 def get_sales_with_fifo_profit():
