@@ -1,6 +1,6 @@
 # StockX
 
-A simple web application for managing a stock portfolio with updated price data via Yahoo Finance. 
+A simple web application for managing stock portfolios with price data updates via Yahoo Finance. 
 
 ## Setup and run the app (Linux/MacOS)
 
