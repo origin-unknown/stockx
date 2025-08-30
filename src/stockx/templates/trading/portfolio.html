@@ -35,7 +35,7 @@
 				<td class="text-end text-nowrap">{{ item.price|currencyformat('USD') }}</td>
 				<td class="text-end text-nowrap">{{ item.value|currencyformat('USD') }}</td>
 				<td class="text-end text-nowrap">{{ item.gain|currencyformat('USD') }}</td>
-				<td><a style="text-decoration: none;" href="{{ url_for('trading.sell', symbol=item.symbol) }}"><i class="fas fa-minus"></i> Sell</a></td>
+				<td class="text-end text-nowrap"><a style="text-decoration: none;" href="{{ url_for('trading.sell', symbol=item.symbol) }}"><i class="fas fa-minus"></i> Sell</a></td>
 			</tr>
 			{% endfor -%}
 		</tbody>
