@@ -38,12 +38,14 @@ def index():
 		data[tx.symbol]['cost'] += tx.shares * tx.price
 
 	total = 0
+	total_gain = Decimal('0.00')
 	items = []
 	for k,v in data.items():
 		if v['shares'] == 0:
 			continue
 		entry = PortfolioItem(k, v['shares'], v['cost'], get_stock_price(k))
 		total += entry.value
+		total_gain += entry.gain
 		items.append(entry)
 
 	return render_template('portfolio.html', **locals())
