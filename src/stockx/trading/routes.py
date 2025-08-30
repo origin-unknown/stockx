@@ -5,6 +5,7 @@ from .models import PortfolioItem, Transaction, TransactionType
 from .utils import get_stock_price
 from collections import defaultdict, deque
 from datetime import date, timedelta
+from decimal import Decimal
 from flask import (
 	Blueprint, 
 	abort, 
@@ -61,13 +62,8 @@ def transactions():
 def buy():
 	form = BuyForm(request.form)
 	if form.validate_on_submit():
-		try:
-			price = get_stock_price(form.symbol.data.upper(), True)
-		except Exception as exc:
-			flash(r'No price available at the moment.', 'danger')
-			return redirect(request.url)
 		tx = Transaction(
-			price=price, 
+			price=form.price.data, 
 			shares=form.shares.data, 
 			symbol=form.symbol.data.upper(), 
 			type=TransactionType.BUY, 
@@ -84,15 +80,13 @@ def buy():
 @login_required
 def sell():
 	symbol = request.args.get('symbol')
-	form = SellForm(request.form, data={'symbol': symbol})
+	form = SellForm(request.form, data={
+		'symbol': symbol, 
+		'price': get_stock_price(symbol.upper(), False)
+	})
 	if form.validate_on_submit():
-		try:
-			price = get_stock_price(form.symbol.data.upper(), True)
-		except Exception as exc:
-			flash(r'No price available at the moment.', 'danger')
-			return redirect(request.url)
 		tx = Transaction(
-			price=price,  
+			price=form.price.data, 
 			shares=-form.shares.data, 
 			symbol=form.symbol.data.upper(), 
 			type=TransactionType.SELL, 
@@ -119,13 +113,13 @@ def calculate_fifo_profits(user_id):
 			db.select(Transaction)
 			.where(Transaction.user_id == user_id)
 			.order_by(Transaction.symbol, Transaction.date_created.asc())
-		)
+ 		)
 		.scalars()
 		.all()
 	)
 
 	results = []
-	total_profit = 0.0
+	total_profit = Decimal('0.0')
 
 	queues: dict[str, deque] = {}
 
@@ -136,7 +130,7 @@ def calculate_fifo_profits(user_id):
 			symbol_queue.append([tx.shares, tx.price])
 		elif tx.type == TransactionType.SELL:
 			remaining = abs(tx.shares)
-			profit = 0.0
+			profit = Decimal('0.0')
 			while remaining > 0 and symbol_queue:
 				buy_shares, buy_price = symbol_queue[0]
 				used = min(remaining, buy_shares)
@@ -152,6 +146,17 @@ def calculate_fifo_profits(user_id):
 				total_profit += profit
 
 	return results, total_profit
+
+@bp.route('/retrieve-price/<symbol>')
+@login_required
+def retrieve_price(symbol):
+	print(symbol)
+	try:
+		price = get_stock_price(symbol.upper(), True)
+	except Exception as exc:
+		print(exc)
+		abort(404)
+	return { 'data': price }
 
 @bp.route('/charts')
 @login_required

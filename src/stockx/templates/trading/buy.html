@@ -41,9 +41,40 @@
 			</small>
 			{% endif %}
 		</div>
+		<div class="mb-3">
+			{{ form.price.label(class_='form-label') }}
+			{{ form.price(class_='form-control' +
+					('', ' is-invalid')[form.price.errors | count],
+					autofocus='') }}
+			{% if form.price.errors: %}
+			<div class="invalid-feedback">
+				{{ form.price.errors[0] }}
+			</div>
+			{% else %}
+			<small class_="form-text text-muted">
+				{{ form.price.description }}
+			</small>
+			{% endif %}
+		</div>
 		<div class="">
 			{{ form.submit(class_='btn btn-primary') }}
 		</div>
 	</form>
 
+	<script>
+		(function() {
+			const symbolField = document.getElementById('symbol');
+			const priceField = document.getElementById('price');
+
+			symbolField.addEventListener('change', () => {
+				const symbol = symbolField.value;
+				fetch(`/portfolio/retrieve-price/${symbol}`, { credentials: 'include' })
+					.then(resp => resp.ok && resp.json())
+					.then(data => {
+						priceField.value = data ? data.data.toFixed(2) : '0.00';
+					});
+			});
+
+		})();
+	</script>
 {% endblock %}

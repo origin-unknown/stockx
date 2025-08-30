@@ -1,6 +1,7 @@
 from .. import db
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
 from sqlalchemy import Enum, Float, func
 from sqlalchemy.ext.hybrid import hybrid_property
 import enum
@@ -10,7 +11,7 @@ import enum
 class PortfolioItem:
 	symbol: str
 	shares: int
-	cost: float
+	cost: Decimal
 	price: float
 
 	@property
@@ -18,13 +19,12 @@ class PortfolioItem:
 		return self.shares * self.price
 
 	@property
-	def gain(self) -> float:
-		return self.value - self.cost
+	def gain(self) -> Decimal:
+		return Decimal(str(self.value)) - self.cost
 
 class TransactionType(enum.Enum):
 	BUY = 1
 	SELL = 2
-
 
 class Transaction(db.Model):
 	__tablename__ = 'transactions'
@@ -36,7 +36,7 @@ class Transaction(db.Model):
 	)
 	symbol: db.Mapped[str] = db.mapped_column(db.String(10), nullable=False)
 	shares: db.Mapped[int] = db.mapped_column(db.Integer, nullable=False, default=0)
-	price: db.Mapped[float] = db.mapped_column(db.Float, nullable=False, default=0.0)
+	price: db.Mapped[Decimal] = db.mapped_column(db.Numeric(15,2), nullable=False, default=0)
 	type: db.Mapped[TransactionType] = db.mapped_column(Enum(TransactionType), nullable=False)
 
 	user_id: db.Mapped[int]= db.mapped_column(db.Integer, db.ForeignKey('users.id'), nullable=False)
