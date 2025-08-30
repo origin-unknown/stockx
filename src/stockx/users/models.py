@@ -14,7 +14,10 @@ class User(db.Model, UserMixin):
 	email: db.Mapped[str] = db.mapped_column(db.String(320), unique=True)
 	password_hash: db.Mapped[str] = db.mapped_column(db.String(60), nullable=False)
 
-	transactions: db.Mapped[List['Transaction']] = db.relationship(back_populates='user')
+	transactions: db.Mapped[List['Transaction']] = db.relationship(
+		back_populates='user', 
+		cascade='all, delete-orphan' 
+	)
 
 	@property
 	def password(self):
