@@ -2,6 +2,7 @@ from flask import Flask, current_app, request, session
 from flask_babel import Babel
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import (
 	DeclarativeBase, 
 )
@@ -12,6 +13,7 @@ class Base(DeclarativeBase):
 
 
 babel = Babel()
+csrf = CSRFProtect()
 db = SQLAlchemy(model_class=Base)
 moment = Moment()
 
@@ -29,6 +31,7 @@ def create_app():
 	)
 
 	babel.init_app(app, locale_selector=get_locale)
+	csrf.init_app(app)
 	db.init_app(app)
 	moment.init_app(app)
 

@@ -64,3 +64,21 @@ def register():
 		flash('Your user has been created, please login.', category='success')
 		return redirect(url_for('.login'))
 	return render_template('register.html', **locals())
+
+# delete account
+@bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+	if request.method == 'POST':
+		user_id = current_user.id
+		logout_user()
+		session.clear()
+
+		user = db.session.scalar(db.select(User).where(User.id == user_id))
+		db.session.delete(user)
+		db.session.commit()
+
+		flash('Your account has been removed.', category='success')
+		return redirect(url_for('main.index'))
+
+	return render_template('profile.html', **locals())
