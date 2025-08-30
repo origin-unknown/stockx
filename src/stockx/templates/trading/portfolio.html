@@ -20,10 +20,10 @@
 		<thead>
 			<tr>
 				<th>Symbol</th>
-				<th>Shares</th>
-				<th>Price</th>
-				<th>Value</th>
-				<th>Gain</th>
+				<th class="text-end text-nowrap">Shares</th>
+				<th class="text-end text-nowrap">Price</th>
+				<th class="text-end text-nowrap">Value</th>
+				<th class="text-end text-nowrap">Gain</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -31,22 +31,20 @@
 			{% for item in items|sort(attribute='symbol') -%}
 			<tr>
 				<td>{{ item.symbol }}</td>
-				<td>{{ item.shares }}</td>
-				<td>$ {{ '%.2f'|format(item.price) }}</td>
-				<td>$ {{ '%.2f'|format(item.value) }}</td>
-				<td>$ {{ '%.2f'|format(item.gain) }}</td>
+				<td class="text-end text-nowrap">{{ item.shares }} pcs</td>
+				<td class="text-end text-nowrap">{{ item.price|currencyformat('USD') }}</td>
+				<td class="text-end text-nowrap">{{ item.value|currencyformat('USD') }}</td>
+				<td class="text-end text-nowrap">{{ item.gain|currencyformat('USD') }}</td>
 				<td><a style="text-decoration: none;" href="{{ url_for('trading.sell', symbol=item.symbol) }}"><i class="fas fa-minus"></i> Sell</a></td>
 			</tr>
 			{% endfor -%}
 		</tbody>
-	</table>
-
-	<table class="table">
-		<tbody>
+		<tfoot>
 			<tr>
-				<th>Total</td>
-				<td>$ {{ '%.2f'|format(total) }}</td>
+				<td colspan="3"></td>
+				<td class="text-end text-nowrap">{{ total|currencyformat('USD') }}</td>
+				<td colspan="2"></td>
 			</tr>
-		</tbody>
+		</tfoot>
 	</table>
 {% endblock %}

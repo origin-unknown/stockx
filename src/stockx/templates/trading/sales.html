@@ -15,24 +15,24 @@
 			<tr>
 				<th>Date</th>
 				<th>Symbol</th>
-				<th>Shares</th>
-				<th>Gain</th>
+				<th class="text-end text-nowrap">Shares</th>
+				<th class="text-end text-nowrap">Gain</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for txn, profit in sales | sort(attribute="0.date_created", reverse=True) -%}
 			<tr>
-				<td>{{ txn.date_created.strftime('%x %X') }}</td>
+				<td>{{ moment(txn.date_created).format('L LTS') }}</td>
 				<td>{{ txn.symbol }}</td>
-				<td>{{ txn.shares }}</td>
-				<td>$ {{ '%.2f'|format(profit) }}</td>
+				<td class="text-end text-nowrap">{{ txn.shares }} pcs</td>
+				<td class="text-end text-nowrap">{{ profit|currencyformat('USD') }}</td>
 			</tr>
 			{% endfor -%}
 		</tbody>
 		<tfoot>
 			<tr>
 				<td colspan="3"></td>
-				<td>$ {{ '%.2f'|format(total_profit) }}
+				<td class="text-end text-nowrap">{{ total_profit|currencyformat('USD') }}
 			</tr>
 		</tfoot>
 	</table>

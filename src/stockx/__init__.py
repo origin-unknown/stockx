@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, current_app, request, session
+from flask_babel import Babel
+from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import (
 	DeclarativeBase, 
@@ -8,17 +10,27 @@ from sqlalchemy.orm import (
 class Base(DeclarativeBase):
 	pass
 
+
+babel = Babel()
 db = SQLAlchemy(model_class=Base)
+moment = Moment()
+
+def get_locale():
+    return session.get('lang', request.accept_languages.best_match(current_app.config['BABEL_SUPPORTED_LOCALES']))
 
 def create_app():
 	app = Flask(__name__)
 	#  later use Config class
 	app.config.from_mapping(
 		SECRET_KEY='your secret here', 
-		SQLALCHEMY_DATABASE_URI='sqlite:///stockx.db'
+		SQLALCHEMY_DATABASE_URI='sqlite:///stockx.db', 
+		BABEL_DEFAULT_LOCALE='en', 
+		BABEL_SUPPORTED_LOCALES=['en', 'de'] 
 	)
 
+	babel.init_app(app, locale_selector=get_locale)
 	db.init_app(app)
+	moment.init_app(app)
 
 	with app.app_context():
 		from .users.models import User

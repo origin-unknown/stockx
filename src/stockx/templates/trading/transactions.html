@@ -16,20 +16,20 @@
 				<th>Date</th>
 				<th>Type</th>
 				<th>Symbol</th>
-				<th>Shares</th>
-				<th>Price</th>
-				<th>Cost</th>
+				<th class="text-end text-nowrap">Shares</th>
+				<th class="text-end text-nowrap">Price</th>
+				<th class="text-end text-nowrap">Cost</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for item in items -%}
 			<tr>
-				<td>{{ item.date_created.strftime('%x %X') }}</td>
+				<td>{{ moment(item.date_created).format('L LTS') }}</td>
 				<td>{{ item.type.name }}</td>
 				<td>{{ item.symbol }}</td>
-				<td>{{ item.shares }}</td>
-				<td>$ {{ '%.2f'|format(item.price) }}</td>
-				<td>$ {{ '%.2f'|format(item.cost) }}</td>
+				<td class="text-end text-nowrap">{{ item.shares }} pcs</td>
+				<td class="text-end text-nowrap">{{ item.price|currencyformat('USD') }}</td>
+				<td class="text-end text-nowrap">{{ item.cost|currencyformat('USD') }}</td>
 			</tr>
 			{% endfor -%}
 		</tbody>
