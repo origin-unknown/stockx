@@ -2,7 +2,7 @@ from .. import db
 from ..users.models import User
 from .forms import BuyForm, SellForm
 from .models import PortfolioItem, Transaction, TransactionType
-from .utils import get_stock_price
+from .utils import get_stock_price, ticker_exists
 from collections import defaultdict, deque
 from datetime import date, timedelta
 from decimal import Decimal
@@ -64,18 +64,21 @@ def transactions():
 def buy():
 	form = BuyForm(request.form)
 	if form.validate_on_submit():
-		tx = Transaction(
-			price=form.price.data, 
-			shares=form.shares.data, 
-			symbol=form.symbol.data.upper(), 
-			type=TransactionType.BUY, 
-			user_id=current_user.id
-		)
-		db.session.add(tx)
-		db.session.commit()
-		flash(f'Bought {form.shares.data} shares of {form.symbol.data.upper()}', 'success')
-		return redirect(url_for('.index'))
-
+		# Maybe check if symbol available.
+		if ticker_exists(form.symbol.data.upper()):
+			tx = Transaction(
+				price=form.price.data, 
+				shares=form.shares.data, 
+				symbol=form.symbol.data.upper(), 
+				type=TransactionType.BUY, 
+				user_id=current_user.id
+			)
+			db.session.add(tx)
+			db.session.commit()
+			flash(f'Bought {form.shares.data} shares of {form.symbol.data.upper()}', 'success')
+			return redirect(url_for('.index'))
+		else:
+			flash(f'No price available at the moment for {form.symbol.data.upper()}.', 'danger')
 	return render_template('buy.html', **locals())
 
 @bp.route('/sell', methods=['GET', 'POST'])
@@ -152,11 +155,9 @@ def calculate_fifo_profits(user_id):
 @bp.route('/retrieve-price/<symbol>')
 @login_required
 def retrieve_price(symbol):
-	print(symbol)
 	try:
 		price = get_stock_price(symbol.upper(), True)
 	except Exception as exc:
-		print(exc)
 		abort(404)
 	return { 'data': price }
 
