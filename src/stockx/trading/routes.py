@@ -58,13 +58,11 @@ def transactions():
 		.order_by(Transaction.date_created.desc())).all()
 	return render_template('transactions.html', **locals())
 
-
 @bp.route('/buy', methods=['GET', 'POST'])
 @login_required
 def buy():
 	form = BuyForm(request.form)
 	if form.validate_on_submit():
-		# Maybe check if symbol available.
 		if not ticker_exists(form.symbol.data.upper()):
 			tx = Transaction(
 				price=form.price.data, 

@@ -9,14 +9,14 @@ from wtforms.validators import DataRequired, NumberRange, ValidationError
 
 class BuyForm(FlaskForm):
 	symbol = StringField('Symbol', validators=[DataRequired()])
-	# Allow broken numbers
+	# Allow fractional numbers
 	shares = IntegerField('Number of Shares', validators=[DataRequired(), NumberRange(min=1)])
 	price = DecimalField('Price (USD)', validators=[NumberRange(min=0)])
 	submit = SubmitField('Buy')
 
 class SellForm(FlaskForm):
 	symbol = StringField('Symbol', validators=[DataRequired()])
-	# Allow broken numbers
+	# Allow fractional numbers
 	shares = IntegerField('Number of Shares', validators=[DataRequired(), NumberRange(min=1)])
 	price = DecimalField('Price (USD)', validators=[NumberRange(min=0)])
 	submit = SubmitField('Sell')
