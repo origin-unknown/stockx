@@ -27,7 +27,7 @@
 				<td>{{ moment(item.date_created).format('L LTS') }}</td>
 				<td>{{ item.type.name }}</td>
 				<td>{{ item.symbol }}</td>
-				<td class="text-end text-nowrap">{{ item.shares }} pcs</td>
+				<td class="text-end text-nowrap">{{ item.shares|numberformat }} pcs</td>
 				<td class="text-end text-nowrap">{{ item.price|currencyformat('USD') }}</td>
 				<td class="text-end text-nowrap">{{ item.cost|currencyformat('USD') }}</td>
 			</tr>

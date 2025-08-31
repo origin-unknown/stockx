@@ -31,7 +31,7 @@
 			{% for item in items|sort(attribute='symbol') -%}
 			<tr>
 				<td>{{ item.symbol }}</td>
-				<td class="text-end text-nowrap">{{ item.shares }} pcs</td>
+				<td class="text-end text-nowrap">{{ item.shares|numberformat }} pcs</td>
 				<td class="text-end text-nowrap">{{ item.price|currencyformat('USD') }}</td>
 				<td class="text-end text-nowrap">{{ item.value|currencyformat('USD') }}</td>
 				<td class="text-end text-nowrap">{{ item.gain|currencyformat('USD') }}</td>

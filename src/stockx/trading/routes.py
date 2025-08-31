@@ -65,7 +65,7 @@ def buy():
 	form = BuyForm(request.form)
 	if form.validate_on_submit():
 		# Maybe check if symbol available.
-		if ticker_exists(form.symbol.data.upper()):
+		if not ticker_exists(form.symbol.data.upper()):
 			tx = Transaction(
 				price=form.price.data, 
 				shares=form.shares.data, 

@@ -24,7 +24,7 @@
 			<tr>
 				<td>{{ moment(txn.date_created).format('L LTS') }}</td>
 				<td>{{ txn.symbol }}</td>
-				<td class="text-end text-nowrap">{{ txn.shares }} pcs</td>
+				<td class="text-end text-nowrap">{{ txn.shares|numberformat }} pcs</td>
 				<td class="text-end text-nowrap">{{ profit|currencyformat('USD') }}</td>
 			</tr>
 			{% endfor -%}
