@@ -10,7 +10,9 @@ import enum
 @dataclass
 class PortfolioItem:
 	symbol: str
-	shares: int 	# Allow fractional numbers
+	# Allow fractional numbers
+	# shares: Decimal
+	shares: int 
 	cost: Decimal
 	price: float
 
@@ -36,6 +38,7 @@ class Transaction(db.Model):
 	)
 	symbol: db.Mapped[str] = db.mapped_column(db.String(10), nullable=False)
 	# Allow fractional numbers
+	# shares: db.Mapped[Decimal] = db.mapped_column(db.Numeric(10,3), nullable=False, default=0)
 	shares: db.Mapped[int] = db.mapped_column(db.Integer, nullable=False, default=0)
 	price: db.Mapped[Decimal] = db.mapped_column(db.Numeric(15,2), nullable=False, default=0)
 	type: db.Mapped[TransactionType] = db.mapped_column(Enum(TransactionType), nullable=False)
