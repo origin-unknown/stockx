@@ -6,7 +6,7 @@ A demo of a simple web application in Flask for managing stock portfolios with p
 
 ```bash
 cd stockx-main
-python3 -m venv . && source bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 flask --app src/stockx:create_app --debug run 
 ```
