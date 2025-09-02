@@ -4,7 +4,7 @@ from flask_bcrypt import (
 	check_password_hash
 )
 from flask_login import UserMixin
-from hashlib import md5, sha256 
+from hashlib import sha256 
 from typing import List
 
 
