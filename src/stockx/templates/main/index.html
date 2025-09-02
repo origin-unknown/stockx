@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block content %}
-	<div class="d-flex w-100 h-100 p-3 mx-auto flex-column">
-    <h1>Simple trading opportunities.</h1>
-    <p class="lead">Gain experience in the financial world and simulate how you can easily increase your money.</p>
-    <p class="lead">
-      <a href="{{ url_for('trading.index') }}" class="btn btn-lg btn-secondary fw-bold">Start now</a>
-    </p>
+  <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5">
+      <h1 class="display-5 fw-bold">Simple trading opportunities.</h1>
+      <p class="col-md-8 fs-4">Gain experience in the financial world and simulate how you can easily increase your money.</p>
+      <a href="{{ url_for('users.register') }}" class="btn btn-lg btn-outline-secondary fw-bold">Start now</a>
+    </div>
   </div>
 {% endblock %}
